@@ -11,6 +11,8 @@ public class conexion {
     ResultSet respuesta;
     
     public void Conexion() {
+        System.out.println("Hola deesde Git");
+        System.out.println("");
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conecta = DriverManager.getConnection(
