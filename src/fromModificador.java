@@ -11,9 +11,12 @@ public class fromModificador extends javax.swing.JFrame {
     private conexion conexion;
     
     private int id;
+    
+    private fromPrincipal fromPrincipal;
+            
 
  
-    public fromModificador() {
+    public fromModificador(fromPrincipal formPrincipal) {
         initComponents();
         conexion = new conexion();
         conexion.Conexion();
@@ -22,16 +25,10 @@ public class fromModificador extends javax.swing.JFrame {
         //obtener clave del libro
         String clave = conexion.ClaveLibro();
         txtClaveLibro.setText(clave );
-        
+        this.fromPrincipal = formPrincipal;
         
         
     }
-
-    
-
-    
-
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -66,7 +63,12 @@ public class fromModificador extends javax.swing.JFrame {
         pnlAutor = new javax.swing.JPanel();
         pnlSeccion = new javax.swing.JPanel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         pnlPrincipal.setBackground(new java.awt.Color(0, 153, 153));
         pnlPrincipal.setBorder(new javax.swing.border.MatteBorder(null));
@@ -282,7 +284,7 @@ public class fromModificador extends javax.swing.JFrame {
     private void cmbAutorItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbAutorItemStateChanged
        if(cmbAutor.getSelectedIndex()<0){
            String Autor = cmbAutor.getSelectedItem().toString();
-           List<String> seccion = conexion.obtnerSeccion(secc);
+           List<String> seccion = conexion.obtnerSeccion(Autor);
            
            cmbSeccion.removeAllItems();
            cmbSeccion.addItem("");
@@ -306,6 +308,12 @@ public class fromModificador extends javax.swing.JFrame {
              
          }
     }//GEN-LAST:event_cmbSeccionItemStateChanged
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        // TODO add your handling code here:
+       
+        this.fromPrincipal.setEnabled(true);
+    }//GEN-LAST:event_formWindowClosed
 
     /**
      * @param args the command line arguments
@@ -337,7 +345,7 @@ public class fromModificador extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new fromModificador().setVisible(true);
+                //new fromModificador(formPrincipal).setVisible(true);
             }
         });
     }
