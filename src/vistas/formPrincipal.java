@@ -1,3 +1,8 @@
+package vistas;
+
+
+import vistas.formLibros;
+
 
 public class formPrincipal extends javax.swing.JFrame {
 

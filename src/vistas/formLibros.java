@@ -1,4 +1,7 @@
+package vistas;
 
+
+import repositorios.LibroRepositorio;
 import java.util.List;
 import java.sql.*;
 import javax.swing.JOptionPane;
@@ -8,9 +11,8 @@ import javax.swing.table.DefaultTableModel;
 
 
 public class formLibros extends javax.swing.JFrame {
-    private LibroRepositorio conexion;
     
-    private int id;
+    private final LibroRepositorio libroRepositorio;
     
     private formPrincipal fromPrincipal;
             
@@ -18,16 +20,8 @@ public class formLibros extends javax.swing.JFrame {
  
     public formLibros(formPrincipal formPrincipal) {
         initComponents();
-        conexion = new LibroRepositorio();
-        conexion.Conexion();
-        int id = conexion.obtenerUltimoId();
-        txtid.setText(String.valueOf(id + 1));
-        //obtener clave del libro
-        String clave = conexion.ClaveLibro();
-        txtClaveLibro.setText(clave );
+        this.libroRepositorio = new LibroRepositorio();
         this.fromPrincipal = formPrincipal;
-        
-        
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -67,6 +61,9 @@ public class formLibros extends javax.swing.JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
+            }
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
             }
         });
 
@@ -314,6 +311,10 @@ public class formLibros extends javax.swing.JFrame {
        
         this.fromPrincipal.setEnabled(true);
     }//GEN-LAST:event_formWindowClosed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments
