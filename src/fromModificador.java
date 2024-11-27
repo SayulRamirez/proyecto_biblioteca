@@ -8,7 +8,7 @@ import javax.swing.table.DefaultTableModel;
 
 
 public class fromModificador extends javax.swing.JFrame {
-    private conexion conexion;
+    private LibroRepositorio conexion;
     
     private int id;
     
@@ -18,7 +18,7 @@ public class fromModificador extends javax.swing.JFrame {
  
     public fromModificador(fromPrincipal formPrincipal) {
         initComponents();
-        conexion = new conexion();
+        conexion = new LibroRepositorio();
         conexion.Conexion();
         int id = conexion.obtenerUltimoId();
         txtid.setText(String.valueOf(id + 1));
