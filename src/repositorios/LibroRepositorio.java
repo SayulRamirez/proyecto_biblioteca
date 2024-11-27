@@ -1,3 +1,6 @@
+package repositorios;
+
+import modelos.Libro;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -102,4 +105,55 @@ public class LibroRepositorio {
         }
         return  lista;
     } 
+    
+    public int actualizarLibro(Libro libro) {
+        try {
+            PreparedStatement seccion = conexion.prepareStatement("select idSeccion from secciones where nomSeccion = ?");
+            seccion.setString(1, libro.getNomSeccion());
+            
+            ResultSet resultadoSeccion = seccion.executeQuery();
+            resultadoSeccion.next();
+            int idSeccion = resultadoSeccion.getInt("idSeccion");
+            
+            PreparedStatement autor = conexion.prepareStatement("select idAutor from autores where nomAutor = ?");
+            autor.setString(1, libro.getNomAutor());
+            
+            ResultSet resultadoAutor = autor.executeQuery();
+            resultadoAutor.next();
+            int idAutor= resultadoAutor.getInt("idSeccion");
+            
+            PreparedStatement queryActualizacion = conexion.prepareStatement("""
+                                                                             update libros set claveLibro = ?,
+                                                                             idSeccion = ?,
+                                                                             idAutor = ?,
+                                                                             nomLibro = ?,
+                                                                             resumenLibro = ?,
+                                                                             existenciasLibro = ?
+                                                                             """);
+            
+            queryActualizacion.setString(1, libro.getClaveLibro());
+            queryActualizacion.setInt(2, idSeccion);
+            queryActualizacion.setInt(3, idAutor);
+            queryActualizacion.setString(4, libro.getNomLibro());
+            queryActualizacion.setString(5, libro.getResumenLibro());
+            queryActualizacion.setInt(6, libro.getExistenciasLibro());
+            
+            return queryActualizacion.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Ocurrio un error: " + e.getErrorCode() + ", mensaje: " + e.getMessage());
+            return 0;
+        }
+    }
+    
+    public int eliminarLibro(String clave) {
+        try {
+            PreparedStatement queryEliminar = conexion.prepareStatement("delete from libros where claveLibro = ?");
+            queryEliminar.setString(1, clave);
+            
+            return queryEliminar.executeUpdate();
+        } catch(SQLException e) {
+            System.out.println("Ocurrio un error: " + e.getErrorCode() + ", mensaje: " + e.getMessage());
+            return 0;
+        }
+    }
 }

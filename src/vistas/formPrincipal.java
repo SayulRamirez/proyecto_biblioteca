@@ -1,10 +1,15 @@
+package vistas;
 
-public class fromPrincipal extends javax.swing.JFrame {
+
+import vistas.formLibros;
+
+
+public class formPrincipal extends javax.swing.JFrame {
 
     /**
      * Creates new form fromPrincipal
      */
-    public fromPrincipal() {
+    public formPrincipal() {
         initComponents();
     }
 
@@ -81,7 +86,7 @@ public class fromPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void mniCrudsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniCrudsActionPerformed
-           fromModificador objecto = new fromModificador(this);
+           formLibros objecto = new formLibros(this);
            
            objecto.setVisible(true);
            objecto.setAlwaysOnTop(true);
@@ -105,20 +110,21 @@ public class fromPrincipal extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(fromPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(formPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(fromPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(formPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(fromPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(formPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(fromPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(formPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new fromPrincipal().setVisible(true);
+                new formPrincipal().setVisible(true);
             }
         });
     }
