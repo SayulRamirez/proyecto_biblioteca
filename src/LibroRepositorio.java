@@ -1,95 +1,105 @@
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-public class conexion {
-    Connection conecta;
-    PreparedStatement consulta;
-    ResultSet respuesta;
+
+public class LibroRepositorio {
     
-    public void Conexion() {
-        System.out.println("Hola deesde Git");
-        System.out.println("");
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conecta = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/biblioteca",
-                    "root",
-                    "Alej@ndro13");
-
-        } catch (Exception e) {
-            System.out.println("Error " + e);
-
-        }
-
+    private final Connection conexion;
+    
+    public LibroRepositorio() {
+        conexion = Conexion.obtenerConexion();
     }
+    
     public int obtenerUltimoId() {
-       
-    if (conecta == null) {
-        System.out.println("Error: La conexión a la base de datos no está inicializada.");
+        try {
+            ResultSet respuesta = conexion.prepareStatement("SELECT MAX(idLibro) as id FROM libros")
+                    .executeQuery();
+            
+            respuesta.next();
+            return respuesta.getInt("id");
+        } catch (SQLException e) {
+            System.out.println("Ocurrio un error: " + e.getErrorCode() + ", mensaje: " + e.getMessage());
+        }
         return 0;
     }
-
-    try {
-        PreparedStatement accion = conecta.prepareStatement("SELECT idLibro FROM libro ORDER BY IdLibro DESC LIMIT 1;");
-        ResultSet registros = accion.executeQuery();
-
-        if (registros.next()) {
-            return registros.getInt("idLibro");
-        }
-    } catch (SQLException e) {
-        System.out.println("Error: " + e.getMessage());
-    }
-    return 0;
-}
-    public String ClaveLibro(){
-        try{
-            consulta = conecta.prepareStatement("select clavelibro from libro where IdAutor = '?'  ;");
-                    respuesta = consulta.executeQuery();
-                    respuesta.next();
-                    
-                    return respuesta.getString("clavelibro");
-                    }catch(SQLException e){
-                        System.out.println("Error"+ e);
-                    }
-        return null;
-        
-    }
-
     
-    public List<String> obtenerAutor(String seccion){
-        List<String> lista  = new ArrayList<>();
+    public int agregarLibro(Libro libro) {
+        
+        try {
+            
+            PreparedStatement seccion = conexion.prepareStatement("select idSeccion from secciones where nomSeccion = ?");
+            seccion.setString(1, libro.getNomSeccion());
+            
+            ResultSet resultadoSeccion = seccion.executeQuery();
+            resultadoSeccion.next();
+            int idSeccion = resultadoSeccion.getInt("idSeccion");
+            
+            PreparedStatement autor = conexion.prepareStatement("select idAutor from autores where nomAutor = ?");
+            autor.setString(1, libro.getNomAutor());
+            
+            ResultSet resultadoAutor = autor.executeQuery();
+            resultadoAutor.next();
+            int idAutor= resultadoAutor.getInt("idSeccion");
+            
+            PreparedStatement query = conexion.prepareStatement("""
+                                                                insert into libros (claveLibro, idSeccion, idAutor, nomLibro, resumenLibro, existenciasLibro)
+                                                                values (?, ?, ?, ?, ?, ?);
+                                                                """);
+            
+            query.setString(1, libro.getClaveLibro());
+            query.setInt(2, idSeccion);
+            query.setInt(3, idAutor);
+            query.setString(4, libro.getNomLibro());
+            query.setString(5, libro.getResumenLibro());
+            query.setInt(6, libro.getExistenciasLibro());
+            
+            return query.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Ocurrio un error: " + e.getErrorCode() + ", mensaje: " + e.getMessage());
+            return 0;
+        }
+    }
+    
+    public List<Libro> obtenerLibros (){
+        
+        List<Libro> lista  = new ArrayList<>();
         try{
-            consulta = conecta.prepareStatement("select nomAutor from autor;");
-            consulta.setString(1, seccion);
-            respuesta = consulta.executeQuery();
-             while(respuesta.next()){
-                 lista.add(respuesta.getString("nomAutor"));
-             }
+            ResultSet resultado = conexion.prepareStatement("""
+                                                            SELECT 
+                                                                l.idLibro, 
+                                                                l.claveLibro, 
+                                                                l.nomLibro, 
+                                                                l.resumenLibro, 
+                                                                l.existenciasLibro,
+                                                                s.nomSeccion, 
+                                                                a.nomAutor 
+                                                            FROM 
+                                                                libros l
+                                                            JOIN 
+                                                                secciones s ON l.idSeccion = s.idSeccion
+                                                            JOIN 
+                                                                autores a ON l.idAutor = a.idAutor
+                                                            ORDER BY 
+                                                                l.idLibro ASC;
+                                                            """)
+                    .executeQuery();
+            while(resultado.next()){
+                lista.add(new Libro(
+                        resultado.getInt("idLibro"),
+                        resultado.getString("claveLibro"),
+                        resultado.getString("nomLibro"),
+                        resultado.getString("resumenLibro"),
+                        resultado.getInt("existenciasLibro"),
+                        resultado.getString("nomSeccion"),
+                        resultado.getString("nomAutor")
+                ));
+            }
         }catch(SQLException e){
-            System.out.println("Error"+ e);
+            System.out.println("Ocurrio un error: " + e.getErrorCode() + ", mensaje: " + e.getMessage());
         }
         return  lista;
-    }
-    
-    public List<String> obtnerSeccion(String Autor){
-        List<String> lista = new ArrayList<>();
-        try{
-            consulta = conecta.prepareStatement("select nomSeccion from seccion;");
-            consulta.setString(1, Autor);
-            respuesta = consulta.executeQuery();
-            while(respuesta.next()){
-                lista.add(respuesta.getString("nomSeccion"));
-            }
-            
-        }catch(SQLException e){
-                    System.out.println("Error " + e);
-                    }
-        return lista;
-            
-    }
-    
+    } 
 }
