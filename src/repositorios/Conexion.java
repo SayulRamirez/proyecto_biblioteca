@@ -26,8 +26,8 @@ public class Conexion {
             
             conexion = DriverManager.getConnection(
                     "jdbc:mysql://localhost:3306/biblioteca",
-                    "root",
-                    "Alej@ndro13"
+                    "biblioteca",
+                    "pass1234"
             );
         } catch (SQLException e) {
             System.out.println("Ocurrio un error: " + e.getErrorCode() + ", mensaje: " + e.getMessage());
