@@ -12,8 +12,14 @@ public class LibroRepositorio {
     
     private final Connection conexion;
     
+    private final SeccionRepositorio seccionRepositorio;
+    
+    private final AutorRepositorio autorRepositorio;
+    
     public LibroRepositorio() {
-        conexion = Conexion.obtenerConexion();
+        this.conexion = Conexion.obtenerConexion();
+        this.seccionRepositorio = new SeccionRepositorio();
+        this.autorRepositorio = new AutorRepositorio();
     }
     
     public int obtenerUltimoId() {
@@ -32,20 +38,9 @@ public class LibroRepositorio {
     public int agregarLibro(Libro libro) {
         
         try {
+            int idSeccion = seccionRepositorio.obtenerIdPorElNombre(libro.getNomSeccion());
             
-            PreparedStatement seccion = conexion.prepareStatement("select idSeccion from secciones where nomSeccion = ?");
-            seccion.setString(1, libro.getNomSeccion());
-            
-            ResultSet resultadoSeccion = seccion.executeQuery();
-            resultadoSeccion.next();
-            int idSeccion = resultadoSeccion.getInt("idSeccion");
-            
-            PreparedStatement autor = conexion.prepareStatement("select idAutor from autores where nomAutor = ?");
-            autor.setString(1, libro.getNomAutor());
-            
-            ResultSet resultadoAutor = autor.executeQuery();
-            resultadoAutor.next();
-            int idAutor= resultadoAutor.getInt("idSeccion");
+            int idAutor = autorRepositorio.obtenerIdPorElNombre(libro.getNomAutor());
             
             PreparedStatement query = conexion.prepareStatement("""
                                                                 insert into libros (claveLibro, idSeccion, idAutor, nomLibro, resumenLibro, existenciasLibro)
@@ -108,19 +103,9 @@ public class LibroRepositorio {
     
     public int actualizarLibro(Libro libro) {
         try {
-            PreparedStatement seccion = conexion.prepareStatement("select idSeccion from secciones where nomSeccion = ?");
-            seccion.setString(1, libro.getNomSeccion());
+            int idSeccion = seccionRepositorio.obtenerIdPorElNombre(libro.getNomSeccion());
             
-            ResultSet resultadoSeccion = seccion.executeQuery();
-            resultadoSeccion.next();
-            int idSeccion = resultadoSeccion.getInt("idSeccion");
-            
-            PreparedStatement autor = conexion.prepareStatement("select idAutor from autores where nomAutor = ?");
-            autor.setString(1, libro.getNomAutor());
-            
-            ResultSet resultadoAutor = autor.executeQuery();
-            resultadoAutor.next();
-            int idAutor= resultadoAutor.getInt("idSeccion");
+            int idAutor = autorRepositorio.obtenerIdPorElNombre(libro.getNomAutor());
             
             PreparedStatement queryActualizacion = conexion.prepareStatement("""
                                                                              update libros set claveLibro = ?,
