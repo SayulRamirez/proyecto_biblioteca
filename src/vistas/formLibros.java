@@ -8,20 +8,27 @@ import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import modelos.Libro;
+import repositorios.AutorRepositorio;
+import repositorios.SeccionRepositorio;
 
 
 public class formLibros extends javax.swing.JFrame {
     
     private final LibroRepositorio libroRepositorio;
     
+    private final SeccionRepositorio seccionRepositorio;
+    
+    private final AutorRepositorio autorRepositorio;
+    
     private formPrincipal fromPrincipal;
-            
-
  
     public formLibros(formPrincipal formPrincipal) {
         initComponents();
         this.libroRepositorio = new LibroRepositorio();
         this.fromPrincipal = formPrincipal;
+        this.seccionRepositorio = new SeccionRepositorio();
+        this.autorRepositorio = new AutorRepositorio();
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -51,7 +58,7 @@ public class formLibros extends javax.swing.JFrame {
         lblExiten = new javax.swing.JLabel();
         txtExiten = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblLibros = new javax.swing.JTable();
         btnModificar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
         pnlAutor = new javax.swing.JPanel();
@@ -107,18 +114,26 @@ public class formLibros extends javax.swing.JFrame {
 
         lblExiten.setText("Exiten");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblLibros.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID", "CLAVE", "NOMBRE", "DESCRIPCIÓN", "AUTOR", "SECCIÓN", "EXISTENCIAS"
             }
-        ));
-        jScrollPane2.setViewportView(jTable1);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(tblLibros);
 
         btnModificar.setText("Modificar");
 
@@ -279,42 +294,72 @@ public class formLibros extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cmbAutorItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbAutorItemStateChanged
-       if(cmbAutor.getSelectedIndex()<0){
-           String Autor = cmbAutor.getSelectedItem().toString();
-           List<String> seccion = conexion.obtnerSeccion(Autor);
-           
-           cmbSeccion.removeAllItems();
-           cmbSeccion.addItem("");
-           for(int i =0; i<seccion.size(); i++){
-               cmbSeccion.addItem(seccion.get(i));
-           }
-       }else{
-           cmbSeccion.setSelectedIndex(-1);
-       }
+      
 
 
     }//GEN-LAST:event_cmbAutorItemStateChanged
 
     private void cmbSeccionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbSeccionItemStateChanged
-         if(cmbSeccion.getSelectedIndex()>0){
-              String seccion = cmbSeccion.getSelectedItem().toString();
-              List<String> resumen = conexion.obtnerSeccion(seccion);
-               
-                
-                  
-             
-         }
+         
     }//GEN-LAST:event_cmbSeccionItemStateChanged
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-       
         this.fromPrincipal.setEnabled(true);
     }//GEN-LAST:event_formWindowClosed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        // TODO add your handling code here:
+        cargarTablaLibros();
+        
+        cargarComboAutores();
+        
+        cargarComboSecciones();
     }//GEN-LAST:event_formWindowOpened
+
+    private void cargarComboSecciones() {
+        List<String> secciones = seccionRepositorio.obtenerSecciones();
+        
+        cmbSeccion.removeAllItems();
+        
+        cmbSeccion.addItem("");
+        for (String seccion : secciones) {
+            cmbSeccion.addItem(seccion);
+        }
+    }
+
+    private void cargarComboAutores() {
+        List<String> autores = autorRepositorio.obtenerAutores();
+        
+        cmbAutor.removeAllItems();
+        
+        cmbAutor.addItem("");
+        for (String autor : autores) {
+            cmbAutor.addItem(autor);
+        }
+    }
+
+    private void cargarTablaLibros() {
+        // TODO add your handling code here:
+        List<Libro> libros = libroRepositorio.obtenerLibros();
+        
+        DefaultTableModel modelo = (DefaultTableModel) tblLibros.getModel();
+        modelo.getDataVector().clear();
+        
+        for (Libro libro : libros) {
+            
+            modelo.addRow(new Object[]{
+                libro.getIdLibro(),
+                libro.getClaveLibro(),
+                libro.getNomLibro(),
+                libro.getResumenLibro(),
+                libro.getNomAutor(),
+                libro.getNomSeccion(),
+                libro.getExistenciasLibro()
+            });
+        }
+        
+        tblLibros.setModel(modelo);
+    }
 
     /**
      * @param args the command line arguments
@@ -362,7 +407,6 @@ public class formLibros extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lblAutor;
     private javax.swing.JLabel lblClaveLibro;
     private javax.swing.JLabel lblExiten;
@@ -373,6 +417,7 @@ public class formLibros extends javax.swing.JFrame {
     private javax.swing.JPanel pnlLibro;
     private javax.swing.JPanel pnlPrincipal;
     private javax.swing.JPanel pnlSeccion;
+    private javax.swing.JTable tblLibros;
     private javax.swing.JTextArea txaResumen;
     private javax.swing.JTextField txtClaveLibro;
     private javax.swing.JTextField txtExiten;
