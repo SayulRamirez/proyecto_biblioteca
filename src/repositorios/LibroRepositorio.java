@@ -114,6 +114,7 @@ public class LibroRepositorio {
                                                                              nomLibro = ?,
                                                                              resumenLibro = ?,
                                                                              existenciasLibro = ?
+                                                                             where idLibro = ?
                                                                              """);
             
             queryActualizacion.setString(1, libro.getClaveLibro());
@@ -122,6 +123,7 @@ public class LibroRepositorio {
             queryActualizacion.setString(4, libro.getNomLibro());
             queryActualizacion.setString(5, libro.getResumenLibro());
             queryActualizacion.setInt(6, libro.getExistenciasLibro());
+            queryActualizacion.setInt(7, libro.getIdLibro());
             
             return queryActualizacion.executeUpdate();
         } catch (SQLException e) {
@@ -130,15 +132,14 @@ public class LibroRepositorio {
         }
     }
     
-    public int eliminarLibro(String clave) {
+    public void eliminarLibro(String clave) {
         try {
             PreparedStatement queryEliminar = conexion.prepareStatement("delete from libros where claveLibro = ?");
             queryEliminar.setString(1, clave);
             
-            return queryEliminar.executeUpdate();
+            queryEliminar.executeUpdate();
         } catch(SQLException e) {
             System.out.println("Ocurrio un error: " + e.getErrorCode() + ", mensaje: " + e.getMessage());
-            return 0;
         }
     }
 }
