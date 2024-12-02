@@ -1,12 +1,9 @@
-<<<<<<<< HEAD:src/formBusqueda.java
-========
 package vistas;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
->>>>>>>> ab9f5425744db988b15c66719b2acb859bef7274:src/vistas/fromBusqueda.java
 
 import java.awt.Color;
 public class formBusqueda extends javax.swing.JFrame {
